@@ -2,6 +2,8 @@ package droidkaigi.github.io.challenge2019.data.api.response
 
 import com.squareup.moshi.Json
 import com.squareup.moshi.JsonClass
+import java.text.SimpleDateFormat
+import java.util.*
 
 @JsonClass(generateAdapter = true)
 data class Item(
@@ -39,4 +41,7 @@ data class Item(
     companion object {
         const val NO_ID = -1L
     }
+
+    val timeAsDate = Date(time * 1000)
+    fun timeAsDateFormat(format: String) = SimpleDateFormat(format, Locale.JAPAN).format(timeAsDate)
 }
