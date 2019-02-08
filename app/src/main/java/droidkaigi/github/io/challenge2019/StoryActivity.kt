@@ -5,8 +5,11 @@ import android.app.Activity
 import android.content.Intent
 import android.os.AsyncTask
 import android.os.Bundle
+import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.DividerItemDecoration
 import android.support.v7.widget.RecyclerView
+import android.util.Log
+import android.view.Menu
 import android.view.MenuItem
 import android.view.View
 import android.webkit.WebResourceError
@@ -14,16 +17,18 @@ import android.webkit.WebResourceRequest
 import android.webkit.WebView
 import android.webkit.WebViewClient
 import android.widget.ProgressBar
+import android.widget.Toast
+import com.squareup.moshi.Moshi
 import com.squareup.moshi.Types
-import droidkaigi.github.io.challenge2019.data.api.HackerNewsApi
 import droidkaigi.github.io.challenge2019.data.api.response.Item
+import droidkaigi.github.io.challenge2019.repository.HackerNewsRepository
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 import java.util.concurrent.ConcurrentHashMap
 import java.util.concurrent.CountDownLatch
 
-class StoryActivity : BaseActivity() {
+class StoryActivity : AppCompatActivity() {
 
     companion object {
         const val EXTRA_ITEM_JSON = "droidkaigi.github.io.challenge2019.EXTRA_ITEM_JSON"
@@ -36,7 +41,9 @@ class StoryActivity : BaseActivity() {
     private lateinit var progressView: ProgressBar
 
     private lateinit var commentAdapter: CommentAdapter
-    private lateinit var hackerNewsApi: HackerNewsApi
+    private val hackerNewsRepository by lazy { HackerNewsRepository() }
+
+    val moshi = Moshi.Builder().build()
 
     private var getCommentsTask: AsyncTask<Long, Unit, List<Item?>>? = null
     private var hideProgressTask: AsyncTask<Unit, Unit, Unit>? = null
@@ -46,12 +53,9 @@ class StoryActivity : BaseActivity() {
 
     private var item: Item? = null
 
-    override fun getContentView(): Int {
-        return R.layout.activity_story
-    }
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        setContentView(R.layout.activity_story)
         webView = findViewById(R.id.web_view)
         recyclerView = findViewById(R.id.comment_recycler)
         progressView = findViewById(R.id.progress)
@@ -59,10 +63,6 @@ class StoryActivity : BaseActivity() {
         item = intent.getStringExtra(EXTRA_ITEM_JSON)?.let {
             itemJsonAdapter.fromJson(it)
         }
-
-        val retrofit = createRetrofit("https://hacker-news.firebaseio.com/v0/")
-
-        hackerNewsApi = retrofit.create(HackerNewsApi::class.java)
 
         recyclerView.isNestedScrollingEnabled = false
         val itemDecoration = DividerItemDecoration(recyclerView.context, DividerItemDecoration.VERTICAL)
@@ -130,7 +130,7 @@ class StoryActivity : BaseActivity() {
                 val latch = CountDownLatch(ids.size)
 
                 ids.forEach { id ->
-                    hackerNewsApi.getItem(id).enqueue(object : Callback<Item> {
+                    hackerNewsRepository.getItem(id).enqueue(object : Callback<Item> {
                         override fun onResponse(call: Call<Item>, response: Response<Item>) {
                             response.body()?.let { item -> itemMap[id] = item }
                             latch.countDown()
@@ -162,6 +162,11 @@ class StoryActivity : BaseActivity() {
         getCommentsTask?.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, *item!!.kids.toTypedArray())
     }
 
+    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
+        menuInflater.inflate(R.menu.activity_menu, menu)
+        return true
+    }
+
     override fun onOptionsItemSelected(item: MenuItem?): Boolean {
         return when(item?.itemId) {
             R.id.refresh -> {
@@ -175,6 +180,10 @@ class StoryActivity : BaseActivity() {
                 }
                 setResult(Activity.RESULT_OK, intent)
                 finish()
+                return true
+            }
+            R.id.exit -> {
+                this.finish()
                 return true
             }
             else -> super.onOptionsItemSelected(item)
@@ -197,5 +206,10 @@ class StoryActivity : BaseActivity() {
         hideProgressTask?.run {
             if (!isCancelled) cancel(true)
         }
+    }
+
+    private fun showError(throwable: Throwable) {
+        Log.v("error", throwable.message)
+        Toast.makeText(baseContext, throwable.message, Toast.LENGTH_SHORT).show()
     }
 }
