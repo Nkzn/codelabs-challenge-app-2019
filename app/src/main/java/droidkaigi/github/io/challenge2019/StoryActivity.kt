@@ -36,9 +36,9 @@ class StoryActivity : AppCompatActivity() {
         private const val STATE_COMMENTS = "comments"
     }
 
-    private lateinit var webView: WebView
-    private lateinit var recyclerView: RecyclerView
-    private lateinit var progressView: ProgressBar
+    private val webView by lazy { findViewById<WebView>(R.id.web_view) }
+    private val recyclerView by lazy { findViewById<RecyclerView>(R.id.comment_recycler) }
+    private val progressView by lazy { findViewById<ProgressBar>(R.id.progress) }
 
     private lateinit var commentAdapter: CommentAdapter
     private val hackerNewsRepository by lazy { HackerNewsRepository() }
@@ -56,9 +56,6 @@ class StoryActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_story)
-        webView = findViewById(R.id.web_view)
-        recyclerView = findViewById(R.id.comment_recycler)
-        progressView = findViewById(R.id.progress)
 
         item = intent.getStringExtra(EXTRA_ITEM_JSON)?.let {
             itemJsonAdapter.fromJson(it)

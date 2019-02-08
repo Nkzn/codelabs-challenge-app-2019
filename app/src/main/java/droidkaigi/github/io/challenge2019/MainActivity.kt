@@ -37,9 +37,9 @@ class MainActivity : AppCompatActivity() {
         private val REQUEST_CODE = "MainActivity".hashCode() and 0x00FF
     }
 
-    private lateinit var recyclerView: RecyclerView
-    private lateinit var progressView: ProgressBar
-    private lateinit var swipeRefreshLayout: SwipeRefreshLayout
+    private val recyclerView by lazy { findViewById<RecyclerView>(R.id.item_recycler) }
+    private val progressView by lazy { findViewById<ProgressBar>(R.id.progress) }
+    private val swipeRefreshLayout by lazy { findViewById<SwipeRefreshLayout>(R.id.swipe_refresh) }
 
     private lateinit var storyAdapter: StoryAdapter
     private val hackerNewsRepository by lazy { HackerNewsRepository() }
@@ -54,9 +54,6 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
-        recyclerView = findViewById(R.id.item_recycler)
-        progressView = findViewById(R.id.progress)
-        swipeRefreshLayout = findViewById(R.id.swipe_refresh)
 
         val itemDecoration = DividerItemDecoration(recyclerView.context, DividerItemDecoration.VERTICAL)
         recyclerView.addItemDecoration(itemDecoration)
