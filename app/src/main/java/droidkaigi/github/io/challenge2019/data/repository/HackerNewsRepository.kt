@@ -1,4 +1,4 @@
-package droidkaigi.github.io.challenge2019.repository
+package droidkaigi.github.io.challenge2019.data.repository
 
 import droidkaigi.github.io.challenge2019.data.api.HackerNewsApi
 import droidkaigi.github.io.challenge2019.data.api.response.Item

@@ -23,7 +23,7 @@ import com.squareup.moshi.Types
 import droidkaigi.github.io.challenge2019.data.api.response.Item
 import droidkaigi.github.io.challenge2019.data.db.ArticlePreferences
 import droidkaigi.github.io.challenge2019.data.db.ArticlePreferences.Companion.saveArticleIds
-import droidkaigi.github.io.challenge2019.repository.HackerNewsRepository
+import droidkaigi.github.io.challenge2019.data.repository.HackerNewsRepository
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response

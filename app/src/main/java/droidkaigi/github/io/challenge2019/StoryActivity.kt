@@ -21,7 +21,7 @@ import android.widget.Toast
 import com.squareup.moshi.Moshi
 import com.squareup.moshi.Types
 import droidkaigi.github.io.challenge2019.data.api.response.Item
-import droidkaigi.github.io.challenge2019.repository.HackerNewsRepository
+import droidkaigi.github.io.challenge2019.data.repository.HackerNewsRepository
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
